@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Валентинка 💖</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            background-color: #ffdde1;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Фон с анимированными сердечками */
+        .hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .heart {
+            position: absolute;
+            color: #ff4d6d;
+            font-size: 24px;
+            opacity: 0.7;
+            animation: float 5s linear infinite;
+        }
+
+        @keyframes float {
+            from {
+                transform: translateY(100vh);
+                opacity: 1;
+            }
+            to {
+                transform: translateY(-10vh);
+                opacity: 0;
+            }
+        }
+
+        h1 {
+            color: #d63384;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 10px 20px;
+            border-radius: 10px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 20px; /* Расстояние между кнопками */
+            position: relative;
+            z-index: 10;
+        }
+
+        button {
+            font-size: 18px;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+            white-space: nowrap;
+        }
+
+        #yes {
+            background-color: #ff66b2;
+            color: white;
+        }
+
+        #no {
+            background-color: #ff9999;
+            color: white;
+            position: relative; /* Сделано относительным */
+        }
+
+        #valentine {
+            display: none;
+            margin-top: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        #reaction {
+            display: none;
+            font-size: 50px;
+            margin-top: 20px;
+            position: absolute;
+            z-index: 20;
+        }
+
+        video {
+            width: 300px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Двигающиеся сердечки -->
+    <div class="hearts"></div>
+
+    <h1>Ты будешь моей валентинкой? 💕</h1>
+
+    <div class="buttons">
+        <button id="yes">Да 💖</button>
+        <button id="no">Нет 😢</button>
+    </div>
+
+    <div id="valentine">
+        <h2>Да ну😳</h2>
+        <video id="video" controls>
+            <source src="VID-20250213-WA0000.mp4" type="video/mp4">
+            Ваш браузер не поддерживает видео.
+        </video>
+    </div>
+
+    <div id="reaction">🤨🤨🤨</div>
+
+    <audio id="boomSound" preload="auto">
+        <source src="vine-boom.mp3" type="audio/mpeg">
+        Ваш браузер не поддерживает аудио.
+    </audio>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const noButton = document.getElementById("no");
+            const yesButton = document.getElementById("yes");
+            const valentine = document.getElementById("valentine");
+            const video = document.getElementById("video");
+            const reaction = document.getElementById("reaction");
+            const boomSound = document.getElementById("boomSound");
+
+            // Разрешение звука по первому клику
+            document.body.addEventListener("click", function() {
+                boomSound.play().catch(error => console.log("Ошибка звука:", error));
+            }, { once: true });
+
+            // Ограничиваем движение кнопки "Нет" в пределах экрана
+            noButton.addEventListener("mouseenter", function() {
+                let maxX = window.innerWidth - noButton.offsetWidth - 20;
+                let maxY = window.innerHeight - noButton.offsetHeight - 20;
+
+                let x = Math.random() * maxX;
+                let y = Math.random() * maxY;
+
+                noButton.style.position = "absolute";
+                noButton.style.left = `${x}px`;
+                noButton.style.top = `${y}px`;
+
+                // Воспроизведение звука
+                if (boomSound.paused) {
+                    boomSound.currentTime = 0;
+                    boomSound.play().catch(error => console.log("Ошибка звука:", error));
+                }
+
+                // Показываем "🤨🤨🤨" на 1.5 сек
+                reaction.style.display = "block";
+                setTimeout(() => {
+                    reaction.style.display = "none";
+                }, 1500);
+            });
+
+            // Показываем видео при нажатии "Да"
+            yesButton.addEventListener("click", function() {
+                valentine.style.display = "block";
+                video.play();
+            });
+
+            // Создаём двигающиеся сердечки
+            function createHeart() {
+                const heart = document.createElement("div");
+                heart.classList.add("heart");
+                heart.innerHTML = "❤️";
+                document.querySelector(".hearts").appendChild(heart);
+
+                let size = Math.random() * 20 + 10; // Размер сердечка
+                heart.style.fontSize = `${size}px`;
+                heart.style.left = Math.random() * 100 + "vw";
+                heart.style.animationDuration = Math.random() * 3 + 2 + "s"; // Скорость движения
+
+                setTimeout(() => {
+                    heart.remove();
+                }, 5000); // Удаление через 5 секунд
+            }
+
+            setInterval(createHeart, 300);
+        });
+    </script>
+
+</body>
+</html>
